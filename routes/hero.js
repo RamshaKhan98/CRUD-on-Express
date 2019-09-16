@@ -16,8 +16,8 @@ router.get('/heroes/:id',(req,res)=>{
     const id = req.params.id
     conn.query(`SELECT * FROM heroes Where id='${id}'`,(err, result)=>{
         if (err) throw err;
-        res.json(result)
-        console.log(result);
+        res.json(result[0])
+        console.log(result[0]);
       });
 })
 
@@ -38,7 +38,7 @@ router.delete('/heroes/:id', (req, res) => {
   conn.query(`DELETE FROM heroes Where id=${id}`, function (err, hero, fields) {
     if (err)
       res.json({ msg: err.message });;
-    res.json(hero)
+    res.json(hero[0])
 
   });
 })
@@ -46,13 +46,13 @@ router.delete('/heroes/:id', (req, res) => {
 //UPDATE
 
 router.put('/heroes/:id', (req, res) => {
-  let id = req.params.id
-  const name = req.body.name
+  var id = req.params.id;
+  const name = req.body.name;
   //const {name}=req.body
-  conn.query(`UPDATE heroes SET name = '${name}' WHERE id = '${id}'`, function (err, hero) {
+  conn.query(`UPDATE heroes SET name ='${name}' WHERE id = '${id}'`, function (err, hero) {
     if (err)
-      res.json({ msg: err.message });;
-    res.json(hero)
+      res.json({ msg: err.message });
+    res.json(hero[0])
 
   });
 })
