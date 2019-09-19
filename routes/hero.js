@@ -56,5 +56,58 @@ router.put('/heroes/:id', (req, res) => {
 
   });
 })
+//GET all POWERS
+router.get('/powers',(req,res)=>{
+  conn.query("SELECT * FROM powers",(err, result)=>{
+      if (err) throw err;
+      res.json(result)
+      console.log(result);
+    });
+})
+//Get all powers by id
+router.get('/powers/:pid',(req,res)=>{
+  const pid = req.params.pid
+  conn.query(`SELECT * FROM powers Where pid='${pid}'`,(err, result)=>{
+      if (err) throw err;
+      res.json(result[0])
+      console.log(result[0]);
+    });
+})
+
+//Post 
+router.post('/powers',(req,res)=>{
+  // const name = req.body.name;
+  const {pname} = req.body
+  conn.query(`Insert into powers(pname) Values('${pname}') `,(err, result)=>{
+      if (err) throw err;
+      res.json(result)
+      console.log(result);
+    });
+})
+
+//DELETE
+router.delete('/powers/:pid', (req, res) => {
+let pid = req.params.pid
+conn.query(`DELETE FROM powers Where pid=${pid}`, function (err, power, fields) {
+  if (err)
+    res.json({ msg: err.message });;
+  res.json(power[0])
+
+});
+})
+
+//UPDATE
+
+router.put('/powers/:pid', (req, res) => {
+var pid = req.params.pid;
+const pname = req.body.pname;
+//const {name}=req.body
+conn.query(`UPDATE powers SET pname ='${pname}' WHERE pid = '${pid}'`, function (err, power) {
+  if (err)
+    res.json({ msg: err.message });
+  res.json(power[0])
+
+});
+})
 
 module.exports=router;
