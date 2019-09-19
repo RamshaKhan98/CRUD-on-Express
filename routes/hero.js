@@ -109,5 +109,14 @@ conn.query(`UPDATE powers SET pname ='${pname}' WHERE pid = '${pid}'`, function 
 
 });
 })
+//Get all hero Powers
+
+router.get('/heropowers',(req,res)=>{
+    conn.query("SELECT * FROM heroes",(err, result)=>{
+        if (err) throw err;
+        res.json(result)
+        console.log(result);
+      });
+})
 
 module.exports=router;
