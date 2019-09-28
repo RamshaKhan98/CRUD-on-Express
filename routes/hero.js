@@ -111,12 +111,153 @@ conn.query(`UPDATE powers SET pname ='${pname}' WHERE pid = '${pid}'`, function 
 })
 //Get all hero Powers
 
-router.get('/heropowers',(req,res)=>{
-    conn.query("SELECT * FROM heroes",(err, result)=>{
+router.get('/bridgeTable',(req,res)=>{
+    conn.query("SELECT * FROM bridgeTable"
+      ,(err, result)=>{
         if (err) throw err;
         res.json(result)
         console.log(result);
       });
 })
+
+
+//Get all hero powers by id
+router.get('/bridgeTable/:id',(req,res)=>{
+  const id = req.params.id
+  conn.query(`SELECT * FROM heroes LEFT JOIN bridgetable ON heroes.id = bridgetable.id LEFT JOIN powers ON powers.pid = bridgetable.pid where heroes.id = '${id}'`,(err, result)=>{
+      if (err) throw err;
+      res.json(result)
+      console.log(result);
+    });
+})
+
+//Post 
+router.post('/bridgeTable/:id/:pid',(req,res)=>{
+  // const name = req.body.name;
+  const id = req.params.id
+  const pid = req.params.pid
+  conn.query(`Insert into bridgeTable (id , pid) Values ('${id}','${pid}')`,(err, result)=>{
+      if (err) throw err;
+      res.json(result)
+      console.log(result);
+    });
+})
+
+//DELETE
+router.delete('/bridgeTable/:btId', (req, res) => {
+let btId = req.params.btId
+// "DELETE FROM bridgeTable Where btId=" + {btId}
+conn.query(`DELETE FROM bridgeTable Where btId=${btId}`, function (err, power, fields) {
+  if (err)
+    res.json({ msg: err.message });;
+  res.json(btId[0])
+
+});
+})
+
+//UPDATE
+
+router.put('/bridgeTable/:btId', (req, res) => {
+
+var btId = req.params.btId;
+const id = req.body.id;
+const pid = req.body.pid;
+//const {name}=req.body
+conn.query(`UPDATE bridgeTable SET id ='${id}' , pid ='${pid}' WHERE btId = '${btId}'`, function (err, bridgeTable) {
+  if (err)
+    res.json({ msg: err.message });
+  res.json(bridgeTable)
+
+});
+})
+//Get all costumes
+router.get('/costumes',(req,res)=>{
+  conn.query("SELECT * FROM costumes",(err, result)=>{
+      if (err) throw err;
+      res.json(result)
+      console.log(result);
+    });
+})
+
+//Get all costumes by id
+router.get('/costumes/:cid',(req,res)=>{
+  const cid = req.params.id
+  conn.query(`SELECT * FROM costumes Where cid='${cid}'`,(err, result)=>{
+      if (err) throw err;
+      res.json(result[0])
+      console.log(result[0]);
+    });
+})
+
+//Post 
+router.post('/costumes',(req,res)=>{
+  // const name = req.body.name;
+  const {cname} = req.body
+  conn.query(`Insert into costumes(cname) Values('${cname}') `,(err, result)=>{
+      if (err) throw err;
+      res.json(result)
+      console.log(result);
+    });
+})
+
+//DELETE
+router.delete('/costumes/:cid', (req, res) => {
+let cid = req.params.cid
+conn.query(`DELETE FROM costumes Where cid=${cid}`, function (err, costume, fields) {
+  if (err)
+    res.json({ msg: err.message });;
+  res.json(costume[0])
+
+});
+})
+
+//UPDATE
+
+router.put('/costumes/:cid', (req, res) => {
+var cid = req.params.cid;
+const cname = req.body.cname;
+//const {name}=req.body
+conn.query(`UPDATE costumes SET cname ='${cname}' WHERE cid = '${cid}'`, function (err, costume) {
+  if (err)
+    res.json({ msg: err.message });
+  res.json(costume[0])
+
+});
+})
+//Get all hero costumes
+
+router.get("/herocostumes/:id", function(req,res){
+  var id = req.params.id;
+  conn.query(`SELECT heroes.cid , costumes.cname  FROM costumes, heroes  WHERE heroes.cid = costumes.cid AND heroes.id = '${id}'`, function(err, results){
+      if(err){
+          throw err;
+      }
+      res.send(results);
+  });
+
+});
+
+
+//Delete COSTUME FROM HERO
+
+//we are using PUT as HTTP VERB because we want to edit/update only ONE SINGLE column, NOT the whole row.
+router.put('/herocostumes/:id' , function(req,res){
+  var id = req.params.id
+ 
+  conn.query(`UPDATE heroes SET cid = NULL WHERE id = '${id}'` , function(error , result ) {
+      if(error) throw error;
+      return res.send(result);
+  });
+});
+
+// adding new costume to hero
+router.put("/herocostumes/:id/:cid", function (req, res) {
+  let id = req.params.id;
+  let cid = req.params.cid;
+  conn.query(`UPDATE heroes SET cid ='${cid}' WHERE id ='${id}'` , function (err, result) {
+      if (err) throw err;
+  return res.send(result);
+});
+});
 
 module.exports=router;
